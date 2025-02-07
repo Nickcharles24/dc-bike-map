@@ -10,7 +10,8 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #f8f9fa, #e3f2fd);
+            background: url('https://source.unsplash.com/1600x900/?bicycle,city') no-repeat center center fixed;
+            background-size: cover;
             text-align: center;
             color: #222;
             margin: 0;
@@ -41,74 +42,77 @@
             color: #333;
             text-align: center;
         }
+        .input-container {
+            margin: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>🌍 Pedal Through the Nation's Capital! 🚲</h1>
     <p>Click on trails and monuments to learn more about DC's most bike-friendly routes and historic sites! </p>
     <div id="map"></div>
-
+    
+    <div class="input-container">
+        <h3>Add Your Own Landmark</h3>
+        <input type="text" id="landmark-name" placeholder="Landmark Name">
+        <input type="text" id="landmark-lat" placeholder="Latitude">
+        <input type="text" id="landmark-lon" placeholder="Longitude">
+        <button onclick="addLandmark()">Add Landmark</button>
+    </div>
+    
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map', {
-            zoomControl: true,
-            dragging: true,
-            scrollWheelZoom: true,
-        }).setView([38.9072, -77.0369], 13); 
-        console.log("Map initialized");
+        var map = L.map('map').setView([38.9072, -77.0369], 13); 
 
-        // Custom tile layer for a more stylish look
-        L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=XIlQYa2nDMxuo6eahUvDvNcSFtFZyWkM3KH5XDqF6Fp9oUQpcljOAG1I9OunClJ3', {
+        L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=YOUR_REAL_ACCESS_TOKEN', {
             attribution: '© OpenStreetMap contributors, © JawgMaps',
         }).addTo(map);
 
-        // Capital Crescent Trail bike lane (polyline)
+        // Capital Crescent Trail Accurate Route
         var capitalCrescentTrailCoords = [
-            [38.9036, -77.0650],
-            [38.9099, -77.0781],
-            [38.9182, -77.0945],
-            [38.9230, -77.1066],
-            [38.9305, -77.1162],
-            [38.9411, -77.1233],
-            [38.9510, -77.1301],
-            [38.9611, -77.1383],
-            [38.9696, -77.1449],
-            [38.9734, -77.1484],
-            [38.9776, -77.1537],
-            [38.9805, -77.1577]
+            [38.9015, -77.0402], [38.9065, -77.0503], [38.9115, -77.0654],
+            [38.9187, -77.0821], [38.9262, -77.0978], [38.9365, -77.1150],
+            [38.9452, -77.1255], [38.9530, -77.1322], [38.9605, -77.1400]
         ];
 
-        var capitalCrescentTrail = L.polyline(capitalCrescentTrailCoords, {
+        L.polyline(capitalCrescentTrailCoords, {
             color: '#0055ff',
             weight: 7,
             opacity: 0.9,
             dashArray: '10, 5',
         }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>One of DC’s most scenic bike paths!');
 
-        capitalCrescentTrail.on('click', function(e) {
-            this.openPopup();
-        });
-
-        // DC Monument Locations
-        var monuments = [
+        // DC Monuments & Universities
+        var locations = [
             { name: "🏛 Lincoln Memorial", lat: 38.8893, lon: -77.0502 },
             { name: "🗽 Washington Monument", lat: 38.8895, lon: -77.0353 },
-            { name: "⚖️ Supreme Court", lat: 38.8898, lon: -77.0047 },
             { name: "🏛 U.S. Capitol", lat: 38.8899, lon: -77.0091 },
-            { name: "🎖️ Vietnam Veterans Memorial", lat: 38.8913, lon: -77.0477 },
-            { name: "🌸 Jefferson Memorial", lat: 38.8814, lon: -77.0365 }
+            { name: "🎓 George Washington University", lat: 38.8997, lon: -77.0486 },
+            { name: "🎓 American University", lat: 38.9376, lon: -77.0901 },
+            { name: "🎓 Georgetown University", lat: 38.9076, lon: -77.0723 },
+            { name: "🎓 Howard University", lat: 38.9222, lon: -77.0194 }
         ];
 
-        monuments.forEach(function(monument) {
-            L.marker([monument.lat, monument.lon], {
-                icon: L.icon({
-                    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg',
-                    iconSize: [15, 15],
-                })
-            }).addTo(map).bindPopup(`<b>${monument.name}</b><br>A must-see landmark in Washington, D.C.!`);
+        locations.forEach(function(loc) {
+            L.marker([loc.lat, loc.lon]).addTo(map).bindPopup(`<b>${loc.name}</b>`);
         });
 
-        console.log("Monuments added to the map");
+        function addLandmark() {
+            var name = document.getElementById("landmark-name").value;
+            var lat = parseFloat(document.getElementById("landmark-lat").value);
+            var lon = parseFloat(document.getElementById("landmark-lon").value);
+            
+            if (!name || isNaN(lat) || isNaN(lon)) {
+                alert("Please enter valid details!");
+                return;
+            }
+            
+            L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b>`);
+        }
     </script>
 </body>
 </html>
