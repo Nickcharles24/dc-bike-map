@@ -10,7 +10,7 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: url('https://source.unsplash.com/1600x900/?bicycle,city') no-repeat center center fixed;
+            background: url('https://source.unsplash.com/1600x900/?bike,city,art') no-repeat center center fixed;
             background-size: cover;
             text-align: center;
             color: #222;
@@ -68,7 +68,7 @@
 </head>
 <body>
     <h1>🌍 Pedal Through the Nation's Capital! 🚲</h1>
-    <p>Click on trails and monuments to learn more about DC's most bike-friendly routes and historic sites! </p>
+    <p>Click on trails, monuments, and universities to learn more about DC's most bike-friendly routes and historic sites! </p>
     <div id="map"></div>
     
     <div class="input-container">
@@ -86,11 +86,11 @@
             attribution: '© OpenStreetMap contributors, © JawgMaps',
         }).addTo(map);
 
-        // Capital Crescent Trail Accurate Route
+        // Capital Crescent Trail - precise route
         var capitalCrescentTrailCoords = [
-            [38.9015, -77.0402], [38.9065, -77.0503], [38.9115, -77.0654],
-            [38.9187, -77.0821], [38.9262, -77.0978], [38.9365, -77.1150],
-            [38.9452, -77.1255], [38.9530, -77.1322], [38.9605, -77.1400]
+            [38.9036, -77.0616], [38.9067, -77.0702], [38.9115, -77.0803],
+            [38.9181, -77.0901], [38.9247, -77.1012], [38.9326, -77.1132],
+            [38.9413, -77.1247], [38.9501, -77.1348], [38.9572, -77.1425]
         ];
 
         L.polyline(capitalCrescentTrailCoords, {
@@ -98,46 +98,17 @@
             weight: 7,
             opacity: 0.9,
             dashArray: '10, 5',
-        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>One of DC’s most scenic bike paths!');
+        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>A scenic biking route connecting DC and Maryland!');
 
-        // DC Monuments & Universities
-        var locations = [
-            { name: "🏛 Lincoln Memorial", lat: 38.8893, lon: -77.0502 },
-            { name: "🗽 Washington Monument", lat: 38.8895, lon: -77.0353 },
-            { name: "🏛 U.S. Capitol", lat: 38.8899, lon: -77.0091 },
-            { name: "🎓 George Washington University", lat: 38.8997, lon: -77.0486 },
-            { name: "🎓 American University", lat: 38.9376, lon: -77.0901 },
-            { name: "🎓 Georgetown University", lat: 38.9076, lon: -77.0723 },
-            { name: "🎓 Howard University", lat: 38.9222, lon: -77.0194 }
-        ];
-
-        locations.forEach(function(loc) {
-            L.marker([loc.lat, loc.lon]).addTo(map).bindPopup(`<b>${loc.name}</b>`);
-        });
-
-        function geocodeAddress() {
-            var name = document.getElementById("landmark-name").value;
-            var address = document.getElementById("landmark-address").value;
-            
-            if (!name || !address) {
-                alert("Please enter a landmark name and address!");
-                return;
+        // Intersection comments feature
+        map.on('click', function(e) {
+            var comment = prompt("Report an issue or note for this intersection:");
+            if (comment) {
+                L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+                    .bindPopup(`<b>Issue Reported:</b> ${comment}`)
+                    .openPopup();
             }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        var lat = parseFloat(data[0].lat);
-                        var lon = parseFloat(data[0].lon);
-                        L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b>`);
-                    } else {
-                        alert("Address not found. Please try another.");
-                    }
-                })
-                .catch(error => alert("Error fetching location."));
-        }
+        });
     </script>
 </body>
 </html>
-
