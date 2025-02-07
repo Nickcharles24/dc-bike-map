@@ -44,10 +44,25 @@
         }
         .input-container {
             margin: 20px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
             display: inline-block;
             border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input {
+            margin: 5px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 8px 12px;
+            background: #ff6f00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -59,16 +74,15 @@
     <div class="input-container">
         <h3>Add Your Own Landmark</h3>
         <input type="text" id="landmark-name" placeholder="Landmark Name">
-        <input type="text" id="landmark-lat" placeholder="Latitude">
-        <input type="text" id="landmark-lon" placeholder="Longitude">
-        <button onclick="addLandmark()">Add Landmark</button>
+        <input type="text" id="landmark-address" placeholder="Street Address">
+        <button onclick="geocodeAddress()">Add Landmark</button>
     </div>
     
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         var map = L.map('map').setView([38.9072, -77.0369], 13); 
 
-        L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=YOUR_REAL_ACCESS_TOKEN', {
+        L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=XIlQYa2nDMxuo6eahUvDvNcSFtFZyWkM3KH5XDqF6Fp9oUQpcljOAG1I9OunClJ3', {
             attribution: '© OpenStreetMap contributors, © JawgMaps',
         }).addTo(map);
 
@@ -101,18 +115,29 @@
             L.marker([loc.lat, loc.lon]).addTo(map).bindPopup(`<b>${loc.name}</b>`);
         });
 
-        function addLandmark() {
+        function geocodeAddress() {
             var name = document.getElementById("landmark-name").value;
-            var lat = parseFloat(document.getElementById("landmark-lat").value);
-            var lon = parseFloat(document.getElementById("landmark-lon").value);
+            var address = document.getElementById("landmark-address").value;
             
-            if (!name || isNaN(lat) || isNaN(lon)) {
-                alert("Please enter valid details!");
+            if (!name || !address) {
+                alert("Please enter a landmark name and address!");
                 return;
             }
-            
-            L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b>`);
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b>`);
+                    } else {
+                        alert("Address not found. Please try another.");
+                    }
+                })
+                .catch(error => alert("Error fetching location."));
         }
     </script>
 </body>
 </html>
+
