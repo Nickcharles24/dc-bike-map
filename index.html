@@ -10,7 +10,7 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: url('https://source.unsplash.com/1600x900/?bike,city,art') no-repeat center center fixed;
+            background: url('https://source.unsplash.com/1600x900/?bike,city,abstract') no-repeat center center fixed;
             background-size: cover;
             text-align: center;
             color: #222;
@@ -68,7 +68,7 @@
 </head>
 <body>
     <h1>🌍 Pedal Through the Nation's Capital! 🚲</h1>
-    <p>Click on trails, monuments, and universities to learn more about DC's most bike-friendly routes and historic sites! </p>
+    <p>Click on trails, monuments, and universities to learn more about DC's most bike-friendly routes and historic sites!</p>
     <div id="map"></div>
     
     <div class="input-container">
@@ -80,27 +80,26 @@
     
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([38.9072, -77.0369], 13); 
+        var map = L.map('map').setView([38.9072, -77.0369], 13);
 
         L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=XIlQYa2nDMxuo6eahUvDvNcSFtFZyWkM3KH5XDqF6Fp9oUQpcljOAG1I9OunClJ3', {
             attribution: '© OpenStreetMap contributors, © JawgMaps',
         }).addTo(map);
 
-        // Capital Crescent Trail - precise route
-        var capitalCrescentTrailCoords = [
-            [38.9036, -77.0616], [38.9067, -77.0702], [38.9115, -77.0803],
-            [38.9181, -77.0901], [38.9247, -77.1012], [38.9326, -77.1132],
-            [38.9413, -77.1247], [38.9501, -77.1348], [38.9572, -77.1425]
+        // Monuments
+        var monuments = [
+            {name: "Lincoln Memorial", coords: [38.8893, -77.0502]},
+            {name: "Washington Monument", coords: [38.8895, -77.0353]},
+            {name: "US Capitol", coords: [38.8899, -77.0091]},
+            {name: "Jefferson Memorial", coords: [38.8814, -77.0365]}
         ];
 
-        L.polyline(capitalCrescentTrailCoords, {
-            color: '#0055ff',
-            weight: 7,
-            opacity: 0.9,
-            dashArray: '10, 5',
-        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>A scenic biking route connecting DC and Maryland!');
+        monuments.forEach(monument => {
+            L.marker(monument.coords).addTo(map)
+                .bindPopup(`<b>${monument.name}</b>`);
+        });
 
-        // Intersection comments feature
+        // User-Reported Intersections
         map.on('click', function(e) {
             var comment = prompt("Report an issue or note for this intersection:");
             if (comment) {
@@ -109,6 +108,18 @@
                     .openPopup();
             }
         });
+
+        // Animated bike path indicator
+        var bikeIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "\ud83d\udeb4",
+            iconSize: [30, 30]
+        });
+        var movingMarker = L.marker([38.9072, -77.0369], { icon: bikeIcon }).addTo(map);
+        setInterval(() => {
+            var latLng = map.getCenter();
+            movingMarker.setLatLng([latLng.lat + (Math.random() - 0.5) * 0.01, latLng.lng + (Math.random() - 0.5) * 0.01]);
+        }, 2000);
     </script>
 </body>
 </html>
