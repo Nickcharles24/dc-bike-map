@@ -6,21 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        #map { height: 600px; width: 100%; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            color: #333;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        #map { 
+            height: 600px; 
+            width: 90%; 
+            max-width: 1000px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .leaflet-popup-content {
+            font-size: 14px;
+            color: #222;
+        }
     </style>
 </head>
 <body>
-    <h1>Interactive Bikeability Map of D.C.</h1>
+    <h1>🚴 Interactive Bikeability Map of D.C. 🚴</h1>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([38.9577, -77.1003], 12); // Centered on Capital Crescent Trail
+        var map = L.map('map', {
+            zoomControl: false, // Remove default zoom controls for a cleaner look
+            dragging: true,
+            scrollWheelZoom: false, // Disable scroll zoom to prevent accidental zooming
+        }).setView([38.9577, -77.1003], 12); 
         console.log("Map initialized");
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+        // Add a custom tile layer with a muted color scheme
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors & CARTO',
         }).addTo(map);
 
         // Add Capital Crescent Trail bike lane (polyline)
@@ -40,10 +65,11 @@
         ];
 
         var capitalCrescentTrail = L.polyline(capitalCrescentTrailCoords, {
-            color: 'darkblue', 
-            weight: 5, 
-            opacity: 0.8
-        }).addTo(map).bindPopup('Capital Crescent Trail');
+            color: '#0056b3', // Deeper blue for better contrast
+            weight: 6,
+            opacity: 0.9,
+            dashArray: '10, 5', // Dashed effect for visual clarity
+        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>A popular cycling route from Georgetown to Bethesda.');
 
         console.log("Capital Crescent Trail added:", capitalCrescentTrail);
 
@@ -53,9 +79,10 @@
             console.log("Trail clicked at: ", e.latlng);
         });
 
-        // Add a sample problem area marker
+        // Add a sample problem area marker with a styled popup
         L.marker([38.910, -77.030]).addTo(map)
-            .bindPopup('High-traffic intersection, cyclists report safety concerns');
+            .bindPopup('<b>⚠️ High-Traffic Intersection</b><br>Cyclists report safety concerns due to car congestion.')
+            .openPopup();
     </script>
 </body>
 </html>
