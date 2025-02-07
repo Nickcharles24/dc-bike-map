@@ -1,51 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DC Bikeability Map</title>
+    <title>🚴 Explore DC's Bikeability! 🚴</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Poppins', sans-serif;
+            background-color: #eef2f3;
             text-align: center;
-            color: #333;
+            color: #222;
         }
         h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: #0056b3;
         }
         #map { 
             height: 600px; 
             width: 90%; 
             max-width: 1000px;
             margin: auto;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+            border: 3px solid #0056b3;
         }
         .leaflet-popup-content {
-            font-size: 14px;
-            color: #222;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>🚴 Interactive Bikeability Map of D.C. 🚴</h1>
+    <h1>🌍 Pedal Through the Nation's Capital! 🚲</h1>
+    <p>Click on the trail to learn more about DC's most bike-friendly routes! </p>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         var map = L.map('map', {
-            zoomControl: false, // Remove default zoom controls for a cleaner look
+            zoomControl: false,
             dragging: true,
-            scrollWheelZoom: false, // Disable scroll zoom to prevent accidental zooming
+            scrollWheelZoom: false,
         }).setView([38.9577, -77.1003], 12); 
         console.log("Map initialized");
 
-        // Add a custom tile layer with a muted color scheme
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap contributors & CARTO',
+        // Add a custom tile layer with an eye-catching design
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
         }).addTo(map);
 
         // Add Capital Crescent Trail bike lane (polyline)
@@ -65,23 +70,27 @@
         ];
 
         var capitalCrescentTrail = L.polyline(capitalCrescentTrailCoords, {
-            color: '#0056b3', // Deeper blue for better contrast
-            weight: 6,
+            color: '#ff6f00', // Vibrant orange for excitement
+            weight: 7,
             opacity: 0.9,
-            dashArray: '10, 5', // Dashed effect for visual clarity
-        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>A popular cycling route from Georgetown to Bethesda.');
+            dashArray: '10, 5',
+        }).addTo(map).bindPopup('<b>🚴 Capital Crescent Trail</b><br>One of DC’s most scenic bike paths!');
 
         console.log("Capital Crescent Trail added:", capitalCrescentTrail);
 
-        // Ensure the trail is clickable and shows a popup
         capitalCrescentTrail.on('click', function(e) {
             this.openPopup();
             console.log("Trail clicked at: ", e.latlng);
         });
 
         // Add a sample problem area marker with a styled popup
-        L.marker([38.910, -77.030]).addTo(map)
-            .bindPopup('<b>⚠️ High-Traffic Intersection</b><br>Cyclists report safety concerns due to car congestion.')
+        L.marker([38.910, -77.030], {
+            icon: L.icon({
+                iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg',
+                iconSize: [12, 12],
+            })
+        }).addTo(map)
+            .bindPopup('<b>⚠️ High-Traffic Zone</b><br>Use caution! Heavy car congestion reported.')
             .openPopup();
     </script>
 </body>
