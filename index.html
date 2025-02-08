@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🚴 Explore DC's Bikeability! 🚴</title>
+    <title>🚴 DC Bikeability Map 🚴</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -10,116 +10,98 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom, #2c3e50, #34495e);
+            background: linear-gradient(to bottom, #1b2838, #34495e);
             text-align: center;
             color: #f5f5f5;
             margin: 0;
             padding: 0;
+            animation: fadeIn 1.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         h1 {
-            font-size: 32px;
-            margin-top: 20px;
+            font-size: 36px;
             color: #ffcc00;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
-        }
-        p {
-            font-size: 20px;
-            margin-bottom: 20px;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
         }
         #map { 
-            height: 600px; 
-            width: 90%; 
-            max-width: 1100px;
+            height: 650px; 
+            width: 95%; 
+            max-width: 1200px;
             margin: auto;
             border-radius: 15px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.4);
             border: 4px solid #ffcc00;
-        }
-        .leaflet-popup-content {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-        }
-        .input-container {
-            margin: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            display: inline-block;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        input {
-            margin: 5px;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            padding: 8px 12px;
-            background: #ffcc00;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>🌍 Pedal Through the Nation's Capital! 🚲</h1>
-    <p>Click on trails, monuments, and universities to learn more about DC's most bike-friendly routes and historic sites!</p>
+    <h1>🌎 DC's Ultimate Bike Map! 🚲</h1>
+    <p>Explore the best bike routes, add your own landmarks, and discover the most bike-friendly spots in Washington, D.C.!</p>
     <div id="map"></div>
-    
-    <div class="input-container">
-        <h3>Add Your Own Landmark</h3>
-        <input type="text" id="landmark-name" placeholder="Landmark Name">
-        <input type="text" id="landmark-address" placeholder="Street Address">
-        <button onclick="geocodeAddress()">Add Landmark</button>
-    </div>
     
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         var map = L.map('map').setView([38.9072, -77.0369], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
+            attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Capital Crescent Trail
-        var trailCoords = [
-            [38.9311, -77.0735], [38.9248, -77.0682], [38.9186, -77.0629], [38.9115, -77.0574],
-            [38.9050, -77.0505], [38.9006, -77.0452], [38.8973, -77.0414], [38.8951, -77.0382]
+        // Capital Crescent Trail - Precise Route
+        var capitalCrescentTrailCoords = [
+            [38.9656, -77.1153], [38.9600, -77.1067], [38.9515, -77.1013], [38.9451, -77.0924],
+            [38.9355, -77.0788], [38.9311, -77.0735], [38.9248, -77.0682], [38.9186, -77.0629], 
+            [38.9115, -77.0574], [38.9050, -77.0505], [38.9006, -77.0452], [38.8973, -77.0414],
+            [38.8951, -77.0382]
         ];
-        var capitalCrescentTrail = L.polyline(trailCoords, {
+        var capitalCrescentTrail = L.polyline(capitalCrescentTrailCoords, {
             color: "#0057e7",
             weight: 5,
-            opacity: 0.8
-        }).addTo(map).bindPopup("Capital Crescent Trail - A scenic biking route!");
+            opacity: 0.9,
+            dashArray: '10, 5'
+        }).addTo(map).bindPopup("🚴 Capital Crescent Trail - A scenic, protected biking route!");
 
-        // Monuments
-        var monuments = [
+        // Adding Other Protected Bike Lanes
+        var protectedBikeLanes = [
+            { name: "15th St NW Protected Lane", coords: [[38.9051, -77.0339], [38.9136, -77.0354]] },
+            { name: "Pennsylvania Ave Bike Lanes", coords: [[38.8954, -77.0365], [38.8959, -77.0198]] }
+        ];
+
+        protectedBikeLanes.forEach(lane => {
+            L.polyline(lane.coords, {
+                color: "#34c759",
+                weight: 5,
+                opacity: 0.9
+            }).addTo(map).bindPopup(`🚴 ${lane.name} - A safe and smooth ride!`);
+        });
+
+        // Monuments & Landmarks
+        var landmarks = [
             {name: "Lincoln Memorial", coords: [38.8893, -77.0502]},
             {name: "Washington Monument", coords: [38.8895, -77.0353]},
             {name: "US Capitol", coords: [38.8899, -77.0091]},
             {name: "Jefferson Memorial", coords: [38.8814, -77.0365]}
         ];
-
-        monuments.forEach(monument => {
-            L.marker(monument.coords).addTo(map)
-                .bindPopup(`<b>${monument.name}</b>`);
+        
+        landmarks.forEach(landmark => {
+            L.marker(landmark.coords).addTo(map)
+                .bindPopup(`<b>${landmark.name}</b>`);
         });
 
-        // Intersection Issue Reporting
+        // Intersection Issue Reporting - Users Can Add Pins
         map.on('click', function(e) {
             var comment = prompt("Report an issue or note for this intersection:");
             if (comment) {
                 L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
-                    .bindPopup(`<b>Issue Reported:</b> ${comment}`)
+                    .bindPopup(`<b>Issue:</b> ${comment}`)
                     .openPopup();
             }
         });
 
-        // Animated bike path indicator
+        // Engaging Feature - Bike Animation
         var bikeIcon = L.divIcon({
             className: 'custom-div-icon',
             html: "🚴",
